@@ -1,4 +1,5 @@
 import sys
+import copy
 
 def countXMASOccurences(row):
 #     print("row:", row)
@@ -27,27 +28,74 @@ def vertCount(table):
 
 #     rows = [[table[j][i] for i in range(0, len(table))] for j in range(0, len(table))]
     for row in rows:
-        print(row)
-        input()
         count += countXMASOccurences("".join(row))
         count += countXMASOccurences("".join(list(reversed(row))))
     return count
 
-# def diagCount(table):
-#     diag1 = [table[0][0]]
-#     d2 = [table[1][0] , table[0][1]]
-#     d3 = [table[2][0] , [1][1], [0][2]]
-#
-#     diags = [[table[][] for ] for ]
 
+def calculateNextCoord(coord, table):
+    y,x = copy.deepcopy(coord)
+    if (y < 0 or y >= len(table)):
+        return None
+    if (x < 0 or x >= len(table[0])):
+       return None
+
+    return [y-1, x+1]
+
+def diagFromStartCoord(coord, table):
+    result = []
+    currentCoord = copy.deepcopy(coord)
+    while currentCoord:
+        result.append(currentCoord)
+        currentCoord = calculateNextCoord(currentCoord, table)
+    return result[:-1]
+
+
+def diagCount(table):
+    count = 0
+    # careful not to double count diagStartCoords!
+    diagStartCoords = [[i, 0] for i in range(0, len(table)-1)] + [[len(table)-1, i] for i in range(0, len(table[0]))]
+#     print("diagStartCoords", diagStartCoords)
+    diagsAsCoords = [diagFromStartCoord(coord, table) for coord in diagStartCoords]
+
+
+
+
+    diagsAsEntries = [[table[coord[0]][coord[1]] for coord in diagAsCoord] for diagAsCoord in diagsAsCoords]
+
+    for diag in diagsAsEntries:
+#         print(diag)
+#         input()
+        forwardResult = countXMASOccurences("".join(diag))
+        reverseResult = countXMASOccurences("".join(list(reversed(diag))))
+
+        if forwardResult > 0:
+#             print("diag:", diag)
+#             print("forwardResult:", forwardResult)
+#             print()
+            count += forwardResult
+
+        if reverseResult > 0:
+#             print("diag:", diag)
+#             print("reverseResult:", reverseResult)
+#             print()
+            count += reverseResult
+
+
+    return count
 
 def main(file_name):
     with open(file_name) as file_handle:
         lines = file_handle.readlines()
     table = [line.replace("\n","") for line in lines]
+    flipped_table = ["".join(list(reversed(row))) for row in table]
+    print("horizCount(table):", horizCount(table))
+    print("vertCount(table):", vertCount(table))
+    print("diagCount(table):", diagCount(table))
+    print("diagCount(flipped_table):", diagCount(flipped_table))
 
-#     return horizCount(table) + vertCount(table) + diagCount(table)
-    return horizCount(table) + vertCount(table)
+
+    return horizCount(table) + vertCount(table) + diagCount(table) + diagCount(flipped_table)
 
 
 
