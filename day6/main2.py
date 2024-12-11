@@ -25,12 +25,21 @@ def updateGrid(grid, direction, currentPos):
 	return direction
 
 def nextStepInBounds(grid, direction, currentPosition):
-	raise Exception("Fill this in")
+    row, col = currentPosition
+    if direction == Direction.NORTH:
+        return (row != 0)
+    elif direction == Direction.SOUTH:
+        return (row != len(grid)-1)
+    elif direction == Direction.WEST:
+        return (col != 0)
+    elif direction == Direction.EAST:
+        return (col != len(grid)-1)
+    raise Exception("Fill this in")
 
-def loops(grid, direction):
+def loops(grid, direction, position):
     n = 1000
     i = 0
-    while(i < n) and nextStepInBounds(grid, direction):
+    while(i < n) and nextStepInBounds(grid, direction, position):
         i += 1
         try:
             direction, position = updateGrid(grid, direction)
@@ -49,6 +58,13 @@ def generatePotentialGrids(grid):
 
     return ans
 
+def findStartingPositino(grid):
+    for rowIndex in range(0, len(grid)):
+        for colIndex in range(0,len(grid[0])):
+            if grid[rowIndex][colIndex]:
+                return [rowIndex, colIndex]
+    raise Exception("it shouldn't be possible to get here")
+
 def main(file_name):
     with open(file_name) as file_handle:
         lines = file_handle.readlines()
@@ -56,7 +72,13 @@ def main(file_name):
 
 
     potentialGrids = generatePotentialGrids(grid)
+    count = 0
+    for grid in potentialGrids:
+        startingPosition = findStartingPositino(grid)
+        if loops(grid, Direction.NORTH, startingPosition):
+            count += 1
 
+    return count
 
 
 
