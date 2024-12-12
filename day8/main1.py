@@ -10,21 +10,37 @@ def downPossibility(pair):
 def upAndRightDiagonal(pair):
 	pass
 
-def antinodesFromVertical(grid, pair):
-	pass
+def inGrid(grid, coords):
+	row, col = coords 
+	return (0 <= row <= len(grid)) and (0 <= col <= len(grid[0]))
 
-def antinodesFromHorizontal(grid, pair):
-	pass
+def antinodesFromVertical(grid, y1, y2, xCoord):
+	deltaY = math.abs(y1-y2)
+	topPossibility = [math.max(y1, y2) + deltaY, xCoord]
+	bottomPossibility = [math.min(y1, y2) - deltaY, xCoord]
+	ans = []
+	ans.append(topPossibility) if inGrid(grid, topPossibility) else None
+	ans.append(bottomPossibility) if inGrid(grid, bottomPossibility) else None
+	return ans
+
+def antinodesFromHorizontal(grid, x1, x2, yCoord):
+	deltaX = math.abs(x1-x2)
+	leftPossibility = [yCoord, math.max(x1, x2) + deltaX]
+	rightPossibility = [yCoord, math.min(x1, x2) - deltaX]
+	ans = []
+	ans.append(leftPossibility) if inGrid(grid, leftPossibility) else None
+	ans.append(rightPossibility) if inGrid(grid, rightPossibility) else None
+	return ans
 
 def antinodeFromPair(grid, pair):
 	loc1, loc2 = pair
-	x1, y1 = loc1
-	x2, y2 = loc2
+	y1, x1 = loc1
+	y2, x2 = loc2
 	
 	if x1 == x2:
-		return antinodesFromVertical(grid, pair)
+		return antinodesFromVertical(grid, y1, y2, x1)
 	if y1 == y2:
-		return antinodesFromHorizontal(grid, pair)
+		return antinodesFromHorizontal(grid, x1, x2, y1)
 	
 	deltaX = math.abs(x1-x2)
 	deltaY = math.abs(y1-y2)
