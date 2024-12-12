@@ -67,7 +67,7 @@ def nextStepInBounds(grid, direction, currentPosition):
     raise Exception("Fill this in")
 
 def loops(grid, direction, position):
-    n = 10000
+    n = 50000
     i = 0
     while(i < n) and nextStepInBounds(grid, direction, position):
         i += 1
@@ -78,14 +78,17 @@ def loops(grid, direction, position):
     return nextStepInBounds(grid, direction, position)
 
 def generatePotentialGrids(grid):
+    print("hello??")
     ans = []
     for rowIndex in range(0, len(grid)):
+        print("rowIndex:", rowIndex)
         for colIndex in range(0, len(grid[0])):
             if grid[rowIndex][colIndex] == ".":
                 newGrid = copy.deepcopy(grid)
                 newGrid[rowIndex][colIndex] = "#"
                 ans.append(newGrid)
 
+    print("goodbye???")
     return ans
 
 def findStartingPositino(grid):
@@ -102,8 +105,11 @@ def main(file_name):
 
 
     potentialGrids = generatePotentialGrids(grid)
+    print("len(potentialGrids):", len(potentialGrids))
     count = 0
-    for grid in potentialGrids:
+    for index, grid in enumerate(potentialGrids):
+        if index % 100 == 0:
+            print(index)
         startingPosition = findStartingPositino(grid)
         if loops(grid, Direction.NORTH, startingPosition):
             count += 1
